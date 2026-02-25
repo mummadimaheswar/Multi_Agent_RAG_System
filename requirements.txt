@@ -1,0 +1,13 @@
+fastapi==0.115.7
+uvicorn[standard]==0.35.0
+pydantic==2.11.7
+httpx==0.28.1
+beautifulsoup4==4.14.3
+readability-lxml==0.8.4.1
+lxml==6.0.2
+python-dotenv==1.2.1
+# Optional (DL embeddings). If not installed, app falls back to TF-IDF.
+# sentence-transformers>=3.3.1
+scikit-learn==1.8.0
+pytest==8.3.5
+pytest-asyncio==0.25.0
