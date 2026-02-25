@@ -1,0 +1,16 @@
+# Render Blueprint
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: ai-smart-assistant
+    runtime: python
+    python:
+      version: "3.11.4"
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run streamlit_app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: GROK_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.11.4"
