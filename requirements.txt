@@ -1,6 +1,6 @@
 fastapi==0.115.7
 uvicorn[standard]==0.35.0
-pydantic==2.11.7
+pydantic>=2.7,<2.12
 httpx==0.28.1
 beautifulsoup4==4.14.3
 readability-lxml==0.8.4.1

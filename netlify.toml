@@ -1,0 +1,18 @@
+[build]
+  command = "pip install -r requirements.txt && python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+  publish = "frontend"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+  PIP_FLAGS = "--no-cache-dir"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api/:splat"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
