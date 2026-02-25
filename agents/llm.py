@@ -1,4 +1,4 @@
-"""LLM abstraction — supports Grok, OpenAI-compatible, and stub mode.
+"""LLM abstraction — supports Groq, OpenAI-compatible, and stub mode.
 
 Production features:
 - Exponential backoff retry (3 attempts)
@@ -25,7 +25,7 @@ class LLMError(RuntimeError):
 
 
 _PROVIDER_URLS: dict[str, str] = {
-    "grok": "https://api.x.ai/v1",
+    "groq": "https://api.groq.com/openai/v1",
     "openai_compatible": "https://api.openai.com/v1",
 }
 
@@ -34,10 +34,10 @@ _RETRY_CODES = {429, 500, 502, 503, 504}
 
 @dataclass
 class LLMConfig:
-    provider: str  # 'stub', 'grok', or 'openai_compatible'
+    provider: str  # 'stub', 'groq', or 'openai_compatible'
     base_url: str | None = None
     api_key: str | None = None
-    model: str = "grok-3-mini-fast"
+    model: str = "llama-3.3-70b-versatile"
     temperature: float = 0.2
     max_retries: int = 3
 
@@ -77,7 +77,7 @@ async def call_llm_json(
             "_stub": True,
             "prompt_used": prompt[:500],
             "input": payload,
-            "note": "Set llm_provider='grok' and env GROK_API_KEY for real outputs.",
+            "note": "Set llm_provider='groq' and env GROQ_API_KEY for real outputs.",
         }
 
     # ── Validate ──────────────────────────────────────────────
@@ -85,7 +85,7 @@ async def call_llm_json(
         raise LLMError(f"Unknown provider: {cfg.provider!r}")
 
     if not cfg.api_key:
-        raise LLMError("Missing API key. Set GROK_API_KEY or LLM_API_KEY env var.")
+        raise LLMError("Missing API key. Set GROQ_API_KEY or LLM_API_KEY env var.")
 
     base_url = (cfg.base_url or _PROVIDER_URLS[cfg.provider]).rstrip("/")
     url = f"{base_url}/chat/completions"

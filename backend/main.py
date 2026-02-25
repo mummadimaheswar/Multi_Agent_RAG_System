@@ -48,7 +48,7 @@ DOMAINS = [
 ]
 
 _DEFAULT_MODELS = {
-    "grok": "grok-3-mini-fast",
+    "groq": "llama-3.3-70b-versatile",
     "openai_compatible": "gpt-4o-mini",
     "stub": "stub",
 }
@@ -79,7 +79,7 @@ async def add_request_meta(request: Request, call_next):
 class ChatRequest(BaseModel):
     user_profile: dict
     seed_urls: list[str] = Field(default_factory=list)
-    llm_provider: str = "grok"
+    llm_provider: str = "groq"
     llm_model: str = ""
 
     def get_message(self) -> str:
@@ -89,21 +89,21 @@ class ChatRequest(BaseModel):
 # ── Endpoints ─────────────────────────────────────────────────
 @app.get("/api/health")
 def health():
-    has_key = bool(os.environ.get("GROK_API_KEY") or os.environ.get("LLM_API_KEY"))
+    has_key = bool(os.environ.get("GROQ_API_KEY") or os.environ.get("LLM_API_KEY"))
     return {
         "ok": True,
         "version": "4.0",
         "api_key_set": has_key,
-        "default_provider": "grok",
+        "default_provider": "groq",
     }
 
 
 def _resolve_llm_params(req: ChatRequest) -> tuple[str, str, str | None, str | None]:
     """Resolve LLM provider, model, API key, and base URL from request + env."""
     provider = req.llm_provider
-    model = req.llm_model or _DEFAULT_MODELS.get(provider, "grok-3-mini-fast")
-    api_key = os.environ.get("GROK_API_KEY") or os.environ.get("LLM_API_KEY")
-    base_url = "https://api.x.ai/v1" if provider == "grok" else os.environ.get("LLM_BASE_URL")
+    model = req.llm_model or _DEFAULT_MODELS.get(provider, "llama-3.3-70b-versatile")
+    api_key = os.environ.get("GROQ_API_KEY") or os.environ.get("LLM_API_KEY")
+    base_url = "https://api.groq.com/openai/v1" if provider == "groq" else os.environ.get("LLM_BASE_URL")
     return provider, model, api_key, base_url
 
 

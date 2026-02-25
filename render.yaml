@@ -10,7 +10,7 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: streamlit run streamlit_app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:
-      - key: GROK_API_KEY
+      - key: GROQ_API_KEY
         sync: false
       - key: PYTHON_VERSION
         value: "3.11.4"

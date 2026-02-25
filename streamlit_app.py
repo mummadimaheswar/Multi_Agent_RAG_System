@@ -149,7 +149,7 @@ DOMAINS = [
 ]
 
 DEFAULT_MODELS = {
-    "grok": "grok-3-mini-fast",
+    "groq": "llama-3.3-70b-versatile",
     "openai_compatible": "gpt-4o-mini",
     "stub": "stub",
 }
@@ -207,8 +207,15 @@ with st.sidebar:
     s_urls = st.text_area("URLs (one per line)", placeholder="https://...", key="s_urls", height=68)
 
     st.markdown("#### 🧠 LLM Settings")
-    s_llm = st.selectbox("Provider", ["grok", "openai_compatible", "stub"], key="s_llm")
-    s_model = st.text_input("Model (optional)", placeholder="grok-3-mini-fast", key="s_model")
+    s_llm = st.selectbox("Provider", ["groq", "openai_compatible", "stub"], key="s_llm")
+    st.text_input(
+        "🔑 API Key",
+        type="password",
+        placeholder="gsk_... (paste your Groq API key)",
+        key="s_api_key",
+        help="Enter your Groq API key. Get one free at https://console.groq.com",
+    )
+    s_model = st.text_input("Model (optional)", placeholder="llama-3.3-70b-versatile", key="s_model")
 
     st.divider()
     st.markdown("##### ⚡ Quick Examples")
@@ -225,8 +232,8 @@ with st.sidebar:
             st.rerun()
 
     st.divider()
-    api_key = os.environ.get("GROK_API_KEY") or os.environ.get("LLM_API_KEY")
-    status = "🟢 API Key Set" if api_key else "🔴 No API Key"
+    api_key = st.session_state.get("s_api_key", "") or os.environ.get("GROQ_API_KEY") or os.environ.get("LLM_API_KEY")
+    status = "🟢 API Key Set" if api_key else "🔴 No API Key — enter your key above"
     st.caption(f"{status} · Smart Routing · RAG · DL Reranking")
 
 
@@ -630,10 +637,14 @@ if query:
     }
 
     seed_urls = _lines(st.session_state.get("s_urls", ""))
-    provider = st.session_state.get("s_llm", "grok")
-    model = st.session_state.get("s_model", "") or DEFAULT_MODELS.get(provider, "grok-3-mini-fast")
-    api_key = os.environ.get("GROK_API_KEY") or os.environ.get("LLM_API_KEY")
-    base_url = "https://api.x.ai/v1" if provider == "grok" else os.environ.get("LLM_BASE_URL")
+    provider = st.session_state.get("s_llm", "groq")
+    model = st.session_state.get("s_model", "") or DEFAULT_MODELS.get(provider, "llama-3.3-70b-versatile")
+    api_key = st.session_state.get("s_api_key", "") or os.environ.get("GROQ_API_KEY") or os.environ.get("LLM_API_KEY")
+    base_url = "https://api.groq.com/openai/v1" if provider == "groq" else os.environ.get("LLM_BASE_URL")
+
+    if not api_key and provider != "stub":
+        st.warning("⚠️ Please enter your API key in the sidebar under **LLM Settings → 🔑 API Key**.")
+        return
 
     # Run orchestrator
     with st.chat_message("assistant", avatar="🤖"):

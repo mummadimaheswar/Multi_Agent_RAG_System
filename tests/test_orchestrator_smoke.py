@@ -28,7 +28,7 @@ class TestLLM:
 
     @pytest.mark.asyncio
     async def test_missing_api_key_raises(self):
-        cfg = LLMConfig(provider="grok", api_key=None)
+        cfg = LLMConfig(provider="groq", api_key=None)
         with pytest.raises(LLMError, match="Missing API key"):
             await call_llm_json(prompt="test", payload={}, cfg=cfg)
 
